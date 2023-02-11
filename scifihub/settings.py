@@ -21,6 +21,8 @@ INSTALLED_APPS = [
 
     "graphene_django",
 
+    "author",
+    "book",
     "worlds",
 ]
 
@@ -92,6 +94,8 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 STATIC_ROOT  = os.path.join(BASE_DIR, 'staticfiles')
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+AUTH_USER_MODEL = 'author.User'
 
 GRAPHENE = {
     "SCHEMA": "schema.schema",
