@@ -18,6 +18,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+
+    "graphene_django",
+
+    "worlds",
 ]
 
 MIDDLEWARE = [
@@ -88,3 +92,7 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 STATIC_ROOT  = os.path.join(BASE_DIR, 'staticfiles')
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+GRAPHENE = {
+    "SCHEMA": "schema.schema",
+}

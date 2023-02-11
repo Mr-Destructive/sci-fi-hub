@@ -1,4 +1,5 @@
 from django.db import models
+from django.template.defaultfilters import default
 
 
 class World(models.Model):
@@ -16,7 +17,67 @@ class World(models.Model):
 
     name = models.CharField(max_length=128, unique=True)
     world_type = models.CharField(
-            max_length=32, 
-            choices=world_types.choices,
-            default=world_types.kingdom
+        max_length=32, 
+        choices=world_types.choices,
+        default=world_types.kingdom
+    )
+    description = models.TextField()
+
+    def __str__(self):
+        return self.world_type + " : " + self.name
+
+
+class Character(models.Model):
+    class character_types(models.TextChoices):
+        protagonist = 'protagonist', 'Protagonist'
+        antagonist = 'antagonist', 'Antagonist'
+        side_kick = 'side_kick', 'Side Kick'
+        love_interest = 'love_interest', 'Love Interest'
+        mentor = 'mentor', 'Mentor'
+        ally = 'ally', 'Ally'
+        spirit = 'spirit', 'Spirit'
+        human = 'human', 'Human'
+        non_human = 'non_human', 'Non-Human'
+        animal = 'animal', 'Animal'
+        monster = 'monster', 'Monster'
+
+    name = models.CharField(max_length=128)
+    nickname = models.CharField(max_length=128)
+    character_type = models.CharField(
+        max_length=32,
+        choices=character_types.choices,
+        default=character_types.human,
+    )
+    bio = models.TextField()
+    attributes = models.TextField()
+
+    def __str__(self):
+        return self.name
+
+
+class Religions(models.Model):
+    name = models.CharField(max_length=128)
+    desription = models.TextField()
+    attributes = models.TextField()
+
+
+class Location(models.Model):
+    class landscape_types(models.TextChoices):
+        forest = 'forest', 'Forest'
+        island = 'island', 'Island'
+        sea = 'sea', 'Sea'
+        river = 'river', 'River'
+        ocean = 'ocean', 'Ocean'
+        mountain = 'mountain', 'Mountain'
+        desert = 'desert', 'Desert'
+        plains = 'plains', 'Plains'
+        
+    name = models.CharField(max_length=128)
+    desription = models.TextField()
+    attributes = models.TextField()
+
+    landscape_type = models.CharField(
+        max_length=32, 
+        choices=landscape_types.choices,
+        default=landscape_types.plains
     )
