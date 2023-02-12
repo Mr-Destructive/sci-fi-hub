@@ -23,6 +23,7 @@ INSTALLED_APPS = [
 
     "author",
     "book",
+    "projects",
     "worlds",
 ]
 
@@ -98,5 +99,5 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = 'author.User'
 
 GRAPHENE = {
-    "SCHEMA": "schema.schema",
+    "SCHEMA": "scifihub.schema.schema",
 }

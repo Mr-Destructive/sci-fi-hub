@@ -1,6 +1,9 @@
 from django.db import models
 from django.template.defaultfilters import default
 
+from book.models import Book
+from projects.models import Project
+
 
 class World(models.Model):
     class world_types(models.TextChoices):
@@ -22,6 +25,9 @@ class World(models.Model):
         default=world_types.kingdom
     )
     description = models.TextField()
+    project = models.ForeignKey(
+        Project, on_delete=models.CASCADE,
+    )
 
     def __str__(self):
         return self.world_type + " : " + self.name
@@ -50,6 +56,12 @@ class Character(models.Model):
     )
     bio = models.TextField()
     attributes = models.TextField()
+    project = models.ForeignKey(
+        Project, on_delete=models.CASCADE,
+    )
+    book = models.ForeignKey(
+        Book, on_delete=models.CASCADE,
+    )
 
     def __str__(self):
         return self.name

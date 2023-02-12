@@ -68,6 +68,7 @@ class Query(graphene.ObjectType):
     def resolve_book_chapters(self, info, book_id):
         return book_models.Chapter.objects.filter(
             section__book_id = book_id,
+            status = True,
         )
 
 
