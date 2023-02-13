@@ -40,13 +40,16 @@ class Query(graphene.ObjectType):
     authors = graphene.List(AuthorType)
     books = graphene.List(BookType)
     book_sections = graphene.List(
-        SectionType, book_id = graphene.String(),
+        SectionType,
+        book_id=graphene.String(),
     )
     book_chapters = graphene.List(
-        ChapterType, book_id = graphene.String(),
+        ChapterType,
+        book_id=graphene.String(),
     )
     books_from_author = graphene.List(
-        BookType, author_name=graphene.String(),
+        BookType,
+        author_name=graphene.String(),
     )
 
     def resolve_authors(self, info):
@@ -57,20 +60,19 @@ class Query(graphene.ObjectType):
 
     def resolve_books_from_author(self, info, author_name):
         return book_models.Book.objects.filter(
-            author__name = author_name,
+            author__name=author_name,
         )
 
     def resolve_book_sections(self, info, book_id):
         return book_models.Section.objects.filter(
-            book_id = book_id,
+            book_id=book_id,
         )
 
     def resolve_book_chapters(self, info, book_id):
         return book_models.Chapter.objects.filter(
-            section__book_id = book_id,
-            status = True,
+            section__book_id=book_id,
+            status=True,
         )
 
 
 schema = graphene.Schema(query=Query)
-

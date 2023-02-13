@@ -7,26 +7,25 @@ from projects.models import Project
 
 class World(models.Model):
     class world_types(models.TextChoices):
-        universe = 'universe', 'Universe'
-        planet = 'planet', 'Planet'
-        continent = 'continent', 'Continent'
-        empire = 'empire', 'Empire'
-        country = 'country', 'Country'
-        kingdom = 'kingdom', 'Kingdom'
-        state = 'state', 'State'
-        region = 'region', 'Region'
-        city = 'city', 'City'
-        town = 'town', 'Town'
+        universe = "universe", "Universe"
+        planet = "planet", "Planet"
+        continent = "continent", "Continent"
+        empire = "empire", "Empire"
+        country = "country", "Country"
+        kingdom = "kingdom", "Kingdom"
+        state = "state", "State"
+        region = "region", "Region"
+        city = "city", "City"
+        town = "town", "Town"
 
     name = models.CharField(max_length=128, unique=True)
     world_type = models.CharField(
-        max_length=32, 
-        choices=world_types.choices,
-        default=world_types.kingdom
+        max_length=32, choices=world_types.choices, default=world_types.kingdom
     )
     description = models.TextField()
     project = models.ForeignKey(
-        Project, on_delete=models.CASCADE,
+        Project,
+        on_delete=models.CASCADE,
     )
 
     def __str__(self):
@@ -35,17 +34,17 @@ class World(models.Model):
 
 class Character(models.Model):
     class character_types(models.TextChoices):
-        protagonist = 'protagonist', 'Protagonist'
-        antagonist = 'antagonist', 'Antagonist'
-        side_kick = 'side_kick', 'Side Kick'
-        love_interest = 'love_interest', 'Love Interest'
-        mentor = 'mentor', 'Mentor'
-        ally = 'ally', 'Ally'
-        spirit = 'spirit', 'Spirit'
-        human = 'human', 'Human'
-        non_human = 'non_human', 'Non-Human'
-        animal = 'animal', 'Animal'
-        monster = 'monster', 'Monster'
+        protagonist = "protagonist", "Protagonist"
+        antagonist = "antagonist", "Antagonist"
+        side_kick = "side_kick", "Side Kick"
+        love_interest = "love_interest", "Love Interest"
+        mentor = "mentor", "Mentor"
+        ally = "ally", "Ally"
+        spirit = "spirit", "Spirit"
+        human = "human", "Human"
+        non_human = "non_human", "Non-Human"
+        animal = "animal", "Animal"
+        monster = "monster", "Monster"
 
     name = models.CharField(max_length=128)
     nickname = models.CharField(max_length=128)
@@ -57,10 +56,12 @@ class Character(models.Model):
     bio = models.TextField()
     attributes = models.TextField()
     project = models.ForeignKey(
-        Project, on_delete=models.CASCADE,
+        Project,
+        on_delete=models.CASCADE,
     )
     book = models.ForeignKey(
-        Book, on_delete=models.CASCADE,
+        Book,
+        on_delete=models.CASCADE,
     )
 
     def __str__(self):
@@ -75,21 +76,19 @@ class Religions(models.Model):
 
 class Location(models.Model):
     class landscape_types(models.TextChoices):
-        forest = 'forest', 'Forest'
-        island = 'island', 'Island'
-        sea = 'sea', 'Sea'
-        river = 'river', 'River'
-        ocean = 'ocean', 'Ocean'
-        mountain = 'mountain', 'Mountain'
-        desert = 'desert', 'Desert'
-        plains = 'plains', 'Plains'
-        
+        forest = "forest", "Forest"
+        island = "island", "Island"
+        sea = "sea", "Sea"
+        river = "river", "River"
+        ocean = "ocean", "Ocean"
+        mountain = "mountain", "Mountain"
+        desert = "desert", "Desert"
+        plains = "plains", "Plains"
+
     name = models.CharField(max_length=128)
     desription = models.TextField()
     attributes = models.TextField()
 
     landscape_type = models.CharField(
-        max_length=32, 
-        choices=landscape_types.choices,
-        default=landscape_types.plains
+        max_length=32, choices=landscape_types.choices, default=landscape_types.plains
     )

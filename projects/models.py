@@ -5,4 +5,3 @@ class Project(models.Model):
 
     name = models.CharField(max_length=128)
     desctription = models.TextField()
-
