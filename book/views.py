@@ -1,3 +1,6 @@
 from django.shortcuts import render
+from graphene_django.views import GraphQLView
+from scifihub.schema import schema
 
-# Create your views here.
+class BookGraphQLView(GraphQLView):
+    schema = schema
