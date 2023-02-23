@@ -66,3 +66,15 @@ class Chapter(models.Model):
         book_name = self.section.book.name
         chapter_order = self.order
         return f"{book_name} : {chapter_order}"
+
+
+class Revision(models.Model):
+    chapter = models.ForeignKey(
+         Chapter, on_delete=models.CASCADE, blank=True
+     )
+     number = models.PositiveIntegerField()
+
+    class Meta:
+        ordering = [
+            "chapter",
+        ]
