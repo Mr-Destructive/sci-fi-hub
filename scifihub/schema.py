@@ -36,6 +36,11 @@ class ChapterType(DjangoObjectType):
         model = book_models.Chapter
 
 
+class RevisionType(DjangoObjectType):
+    class Meta:
+        model = book_models.Revision
+
+
 class Query(graphene.ObjectType):
     authors = graphene.List(AuthorType)
     books = graphene.List(BookType)
@@ -46,6 +51,10 @@ class Query(graphene.ObjectType):
     book_chapters = graphene.List(
         ChapterType,
         book_id=graphene.String(),
+    )
+    chapter_revisions = graphene.List(
+        RevisionType,
+        chapter_id=graphene.String(),
     )
     books_from_author = graphene.List(
         BookType,
@@ -72,6 +81,11 @@ class Query(graphene.ObjectType):
         return book_models.Chapter.objects.filter(
             section__book_id=book_id,
             status=True,
+        )
+
+    def resolve_chapter_revisions(self, info, chapter_id):
+        return book_models.Revision.objects.filter(
+            revision__chapter_id=chapter_id,
         )
 
 
