@@ -4,6 +4,7 @@ from graphene_django import DjangoObjectType
 from worlds import models as world_models
 from author import models as auth_models
 from book import models as book_models
+from projects import models as project_models
 
 
 class WorldType(DjangoObjectType):
@@ -41,6 +42,11 @@ class RevisionType(DjangoObjectType):
         model = book_models.Revision
 
 
+class ProjectType(DjangoObjectType):
+    class Meta:
+        model = project_models.Project
+
+
 class Query(graphene.ObjectType):
     authors = graphene.List(AuthorType)
     books = graphene.List(BookType)
@@ -58,6 +64,10 @@ class Query(graphene.ObjectType):
     )
     books_from_author = graphene.List(
         BookType,
+        author_name=graphene.String(),
+    )
+    projects_of_author = graphene.List(
+        ProjectType,
         author_name=graphene.String(),
     )
 
@@ -86,6 +96,11 @@ class Query(graphene.ObjectType):
     def resolve_chapter_revisions(self, info, chapter_id):
         return book_models.Revision.objects.filter(
             revision__chapter_id=chapter_id,
+        )
+
+    def resolve_projects_of_author(self, info, author_name):
+        return project_models.Project.objects.filter(
+            author__name=author_name,
         )
 
 
