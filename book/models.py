@@ -72,9 +72,29 @@ class Revision(models.Model):
     chapter = models.ForeignKey(
          Chapter, on_delete=models.CASCADE, blank=True
      )
-     number = models.PositiveIntegerField()
+    number = models.PositiveIntegerField()
 
     class Meta:
         ordering = [
-            "chapter",
+            "-number",
         ]
+
+
+class Draft(models.Model):
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    number = models.PositiveIntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    completed_at = models.DateTimeField()
+
+    class Meta:
+        ordering = [
+            "-number",
+        ]
+
+
+class Notes(models.Model):
+    name = models.CharField(max_length=128, blank=True, null=True)
+    text = models.TextField()
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, blank=True)
+
