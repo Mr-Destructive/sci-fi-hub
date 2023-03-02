@@ -47,6 +47,10 @@ class ProjectType(DjangoObjectType):
         model = project_models.Project
 
 
+class DraftType(DjangoObjectType):
+    class Meta:
+        model = book_models.Draft
+
 class Query(graphene.ObjectType):
     authors = graphene.List(AuthorType)
     books = graphene.List(BookType)
@@ -65,6 +69,10 @@ class Query(graphene.ObjectType):
     books_from_author = graphene.List(
         BookType,
         author_name=graphene.String(),
+    )
+    drafts_for_book = graphene.List(
+        DraftType,
+        book_id=graphene.String(),
     )
     projects_of_author = graphene.List(
         ProjectType,
@@ -96,6 +104,10 @@ class Query(graphene.ObjectType):
     def resolve_chapter_revisions(self, info, chapter_id):
         return book_models.Revision.objects.filter(
             revision__chapter_id=chapter_id,
+        )
+    def resolve_draft_for_book(self, info, book_id):
+        return book_models.Draft.objects.filter(
+            book_id=book_id,
         )
 
     def resolve_projects_of_author(self, info, author_name):
