@@ -4,3 +4,6 @@ from scifihub.schema import schema
 
 class BookGraphQLView(GraphQLView):
     schema = schema
+
+class ChapterGraphQLView(GraphQLView):
+    schema = schema
