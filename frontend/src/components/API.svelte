@@ -1,31 +1,32 @@
 <script>
-    const apiUrl = 'http://localhost:8000/';
-    const query = '{authors{id,username}}';
-    const endpoint = `${apiUrl}?query=${encodeURIComponent(query)}`
-  import { onMount, afterUpdate } from 'svelte';
 
-  let element;
+    export let data = {};
 
-  function handleElementChange() {
-    console.log('Element has changed!');
+    async function fetchData() {
+        const apiUrl = 'http://localhost:8000/graphql/';
+        const query = '{authors{id,username}}';
+        const endpoint = `${apiUrl}?query=${encodeURIComponent(query)}`
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'X-CSRFToken': 'hwIhDucVuRtXj5Y3Ay8uj05EBxJtshEt',
+            },
+           body: JSON.stringify({ query }),
+        });
+        const result = await response.json();
+        data = result.data;
   }
 
-  onMount(() => {
-    element.addEventListener('change', handleElementChange);
-  });
-
-    afterUpdate(() => {
-        if (element.value) {
-          previousValue = element.value;
-          console.log('Element value has changed!');
-        }
-      });
+  fetchData();
 </script>
 
-<button _="on click fetch `{endpoint}` then
-                    put the result as an JSON 
-                    into next <p/> ">
-  Get authors
-</button>
-
-    <p id="authors" bind:this={element} ></p>
+{#if data.authors}
+  <ul>
+    {#each data.authors as author }
+      <li>{author.username}</li>
+    {/each}
+  </ul>
+{:else}
+  <p>Loading...</p>
+{/if}
