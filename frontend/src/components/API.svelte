@@ -6,14 +6,7 @@
         const apiUrl = 'http://localhost:8000/graphql/';
         const query = '{authors{id,username}}';
         const endpoint = `${apiUrl}?query=${encodeURIComponent(query)}`
-        const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json',
-                'X-CSRFToken': 'hwIhDucVuRtXj5Y3Ay8uj05EBxJtshEt',
-            },
-           body: JSON.stringify({ query }),
-        });
+        const response = await fetch(endpoint);
         const result = await response.json();
         data = result.data;
   }

@@ -20,6 +20,7 @@ class CharacterType(DjangoObjectType):
 class AuthorType(DjangoObjectType):
     class Meta:
         model = auth_models.User
+        exclude = ('password',)
 
 
 class BookType(DjangoObjectType):
@@ -116,4 +117,33 @@ class Query(graphene.ObjectType):
         )
 
 
-schema = graphene.Schema(query=Query)
+class CreateAuthor(graphene.Mutation):
+    class Arguments:
+        username = graphene.String(required=True)
+        password = graphene.String(required=True)
+        email = graphene.String(required=True)
+
+    author = graphene.Field(AuthorType)
+
+    def mutate(self, info, username, password, email):
+        user = auth_models.User.objects.create_user(username=username, password=password, email=email)
+        return CreateAuthor(author=user)
+
+
+class CreateBook(graphene.Mutation):
+    class Arguments:
+        name = graphene.String(required=True)
+
+    book = graphene.Field(BookType)
+
+    def mutate(self, info, name):
+        author = info.context.user
+        book = book_models.Book.objects.create(name=name, author=author)
+        return CreateBook(book=book)
+
+
+class Mutation(graphene.ObjectType):
+    create_author = CreateAuthor.Field()
+    create_book = CreateBook.Field()
+
+schema = graphene.Schema(query=Query, mutation=Mutation)
