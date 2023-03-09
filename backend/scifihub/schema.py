@@ -1,4 +1,7 @@
 import graphene
+import graphql_jwt
+from graphql_jwt.shortcuts import create_refresh_token, get_token
+from graphql_jwt.decorators import login_required
 from graphene_django import DjangoObjectType
 
 from worlds import models as world_models
@@ -79,8 +82,11 @@ class Query(graphene.ObjectType):
         ProjectType,
         author_name=graphene.String(),
     )
+    whoami = graphene.Field(AuthorType)
 
+    @login_required
     def resolve_authors(self, info):
+        print(info)
         return auth_models.User.objects.all()
 
     def resolve_books(self, info):
@@ -88,7 +94,7 @@ class Query(graphene.ObjectType):
 
     def resolve_books_from_author(self, info, author_name):
         return book_models.Book.objects.filter(
-            author__name=author_name,
+            author__username=author_name,
         )
 
     def resolve_book_sections(self, info, book_id):
@@ -116,18 +122,40 @@ class Query(graphene.ObjectType):
             author__name=author_name,
         )
 
+    def resolve_whoami(self, info):
+        user = info.context.user
+        if user.is_anonymous:
+            raise Exception('Authentication Failure: Your must be signed in')
+        return user
+
+    viewer = graphene.Field(AuthorType)
+
+    def resolve_viewer(self, info, **kwargs):
+        user = info.context.user
+        if not user.is_authenticated:
+            raise Exception("Authentication credentials were not provided")
+        return user
+
 
 class CreateAuthor(graphene.Mutation):
+    author = graphene.Field(AuthorType)
+    token = graphene.String()
+    refresh_token = graphene.String()
+    
     class Arguments:
         username = graphene.String(required=True)
         password = graphene.String(required=True)
         email = graphene.String(required=True)
 
-    author = graphene.Field(AuthorType)
-
     def mutate(self, info, username, password, email):
-        user = auth_models.User.objects.create_user(username=username, password=password, email=email)
-        return CreateAuthor(author=user)
+        user = auth_models.User.objects.create_user(
+            username=username,
+            password=password,
+            email=email,
+        )
+        token = get_token(user)
+        refresh_token = create_refresh_token(user)
+        return CreateAuthor(author=user, token=token, refresh_token=refresh_token)
 
 
 class CreateBook(graphene.Mutation):
@@ -143,6 +171,9 @@ class CreateBook(graphene.Mutation):
 
 
 class Mutation(graphene.ObjectType):
+    token_auth = graphql_jwt.ObtainJSONWebToken.Field()
+    refresh_token = graphql_jwt.Refresh.Field()
+    verify_token = graphql_jwt.Verify.Field()    
     create_author = CreateAuthor.Field()
     create_book = CreateBook.Field()
 
