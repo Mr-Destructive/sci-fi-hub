@@ -1,11 +1,15 @@
 <script>
+    import AddBook from "./components/AddBook.svelte";
     import Api from "./components/API.svelte";
+    import LoginPage from "./components/LoginPage.svelte";
 	export let name;
 </script>
 
 <main>
 	<h1>Hello {name}</h1>
     <Api/>
+    <AddBook/>
+    <LoginPage/>
 	<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
 </main>
 
