@@ -6,7 +6,7 @@
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
-    "start": "sirv public --dev"
+    "start": "sirv public --no-clear"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^24.0.0",
@@ -16,15 +16,13 @@
     "rollup-plugin-css-only": "^4.3.0",
     "rollup-plugin-livereload": "^2.0.0",
     "rollup-plugin-svelte": "^7.1.2",
-    "sirv-cli": "^2.0.2",
-    "svelte": "^3.55.0"
+    "sapper": "^0.29.3",
+    "svelte": "^3.55.0",
+    "svelte-spa-router": "^3.3.0"
   },
   "dependencies": {
-    "@types/jsonwebtoken": "^9.0.1",
-    "hyperscript": "^2.0.2",
-    "jsonwebtoken": "^9.0.0",
     "jwt-decode": "^3.1.2",
-    "rollup-plugin-polyfill-node": "^0.12.0",
-    "svelte-use-form": "^2.6.1"
+    "sirv-cli": "^2.0.0",
+    "svelte-routing": "^1.6.0"
   }
 }

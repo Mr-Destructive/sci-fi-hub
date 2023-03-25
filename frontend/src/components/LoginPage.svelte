@@ -1,5 +1,4 @@
 <script>
-  import jwt from 'jsonwebtoken';
 
   let username = '';
   let password = '';
@@ -21,8 +20,8 @@
     });
     const data = await response.json();
     localStorage.setItem('token', data.token);
-    const decodedToken = jwt.decode(data.token);
-    console.log(decodedToken);
+    //const decodedToken = jwt.decode(data.token);
+    //console.log(decodedToken);
   }
 </script>
 <form on:submit={handleSubmit}>

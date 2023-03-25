@@ -1,16 +1,27 @@
 <script>
     import AddBook from "./components/AddBook.svelte";
     import Api from "./components/API.svelte";
+    import Login from "./components/Login.svelte";
     import LoginPage from "./components/LoginPage.svelte";
 	export let name;
+	export let menu = 1;
 </script>
 
 <main>
-	<h1>Hello {name}</h1>
-    <Api/>
+    <ul id="menu">
+        <li><a href="/" on:click|preventDefault={() => (menu = 1)}>Login</a></li>
+        <li><a href="/" on:click|preventDefault={() => (menu = 2)}>Books</a></li>
+    </ul>
+
+    {#if menu === 1}
+    <Login/>
+    {:else if menu === 2}
     <AddBook/>
-    <LoginPage/>
-	<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
+    {:else}
+    <h1>
+        Page Not Found
+    </h1>
+    {/if}
 </main>
 
 <style>
