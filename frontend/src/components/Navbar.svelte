@@ -7,8 +7,12 @@
     import Logout from "./Logout.svelte";
     import Register from "./Register.svelte";
     import Books from "../books/List.svelte";
+    import Book from "../books/Book.svelte";
     import AddBook from "../books/Add.svelte";
     import { getCookie } from "../utils";
+    import Chapters from "../chapter/List.svelte";
+    import Chapter from "../chapter/Chapter.svelte";
+    import AddChapter from "../chapter/Add.svelte";
     let auth;
     let token = getCookie('token')
     if (token){
@@ -23,16 +27,20 @@
       "/logout": Logout,
       "/register": Register,
       "/books": Books,
+      "/book/:id": Book,
       "/add/books": AddBook,
+      "/chapter/": Chapters, 
+      "/chapter/:id": Chapter, 
+      "/add/chapter/": AddChapter, 
     };
 </script>
 <ul>
-    <li><a href="#/" use:link>Home</a></li>|
+    <li><a href="#/" use:link>Home</a></li> |
     {#if auth}
-        <li><a href="#/logout" use:link>Logout</a></li>|
+        <li><a href="#/logout" use:link>Logout</a></li>
     {:else}
-        <li><a href="#/register" use:link>Register</a></li>|
-        <li><a href="#/login" use:link>Login</a></li>|
+        <li><a href="#/register" use:link>Register</a></li> |
+        <li><a href="#/login" use:link>Login</a></li>
     {/if}
 </ul>
 <Router {routes}/>

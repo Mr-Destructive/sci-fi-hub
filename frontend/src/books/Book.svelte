@@ -17,28 +17,31 @@
 
     const { data } = await resp.json();
     console.log(data)
-    return data.books;
+    return data.book;
   }
 
-let books = [];
+let book;
+let bookId;
   onMount(async () => {
     if (token) {
       const apiUrl = 'http://localhost:8000/graphql/';
-      const query = 'query{books{id, name}}';
-      books = await fetchUserData(apiUrl, token, query);
-      console.log(books)
+      const url = window.location.href;
+      let segment = url.split('/');
+      bookId = segment[segment.length - 1];
+      console.log(bookId)
+      const query = `query{book(bookId:${bookId}){id, name, genre, author{username}}}`;
+      book = await fetchUserData(apiUrl, token, query);
+      console.log(book);
     }
   });
 </script>
 
-{#if books }
-    <ul>
-    {#each books as book}
-        <li><a href="/#/book/{book.id}">{book.name}</a></li>
-    {/each}
-    </ul>
-
-{:else}
-  <p>Hello, Unauthenticated</p>
+{#if book}
+<p>
+  {book.name} - By <i>"{book.author.username}"</i>
+  {book.genre}
+</p>
+  {book.id}
+  <a href="/#/chapter/?bookId={book.id}"><button>+ Chapter</button></a>
 {/if}
-   <a href='#/add/books/'><button>Add Book</button></a>
+

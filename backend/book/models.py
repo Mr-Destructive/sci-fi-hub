@@ -11,7 +11,7 @@ class Book(models.Model):
         on_delete=models.CASCADE,
         related_name="author",
     )
-    genere = models.CharField(max_length=128)
+    genre = models.CharField(max_length=128)
     project = models.ForeignKey(
         Project,
         on_delete=models.CASCADE,
@@ -63,7 +63,7 @@ class Chapter(models.Model):
         unique_together = (("section", "order"),)
 
     def __str__(self):
-        book_name = self.section.book.name
+        book_name = self.book.name
         chapter_order = self.order
         return f"{book_name} : {chapter_order}"
 

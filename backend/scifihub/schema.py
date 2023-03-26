@@ -58,13 +58,21 @@ class DraftType(DjangoObjectType):
 class Query(graphene.ObjectType):
     authors = graphene.List(AuthorType)
     books = graphene.List(BookType)
+    book = graphene.Field(
+        BookType,
+        book_id=graphene.ID(),
+    )
+    chapter = graphene.Field(
+        ChapterType,
+        chapter_id=graphene.ID(),
+    )
     book_sections = graphene.List(
         SectionType,
         book_id=graphene.String(),
     )
     book_chapters = graphene.List(
         ChapterType,
-        book_id=graphene.String(),
+        book_id=graphene.ID(),
     )
     chapter_revisions = graphene.List(
         RevisionType,
@@ -97,6 +105,16 @@ class Query(graphene.ObjectType):
             author__username=author_name,
         )
 
+    def resolve_book(self, info, book_id):
+        return book_models.Book.objects.filter(
+            id=book_id,
+        ).first()
+
+    def resolve_chapter(self, info, chapter_id):
+        return book_models.Chapter.objects.filter(
+            id=chapter_id,
+        ).first()
+
     def resolve_book_sections(self, info, book_id):
         return book_models.Section.objects.filter(
             book_id=book_id,
@@ -104,8 +122,7 @@ class Query(graphene.ObjectType):
 
     def resolve_book_chapters(self, info, book_id):
         return book_models.Chapter.objects.filter(
-            section__book_id=book_id,
-            status=True,
+            book_id=book_id,
         )
 
     def resolve_chapter_revisions(self, info, chapter_id):
@@ -166,9 +183,33 @@ class CreateBook(graphene.Mutation):
 
     def mutate(self, info, name):
         author = info.context.user
-        print(author)
         book = book_models.Book.objects.create(name=name, author=author)
         return CreateBook(book=book)
+
+
+class CreateChapter(graphene.Mutation):
+    class Arguments:
+        name = graphene.String(required=True)
+        book_id = graphene.ID(required=True)
+        text_content = graphene.String(required=True)
+        status = graphene.Boolean(required=False)
+        order = graphene.Int(required=True)
+
+    chapter = graphene.Field(ChapterType)
+
+    def mutate(self, info, name, book_id, text_content, status, order):
+        author = info.context.user
+        book = book_models.Book.objects.filter(id=book_id).first()
+        if book:
+            if author.id == book.author.id:
+                chapter = book_models.Chapter.objects.create(
+                    name=name,
+                    book_id=book_id,
+                    text_content=text_content,
+                    status=status,
+                    order=order,
+                )
+                return CreateChapter(chapter=chapter)
 
 
 class Mutation(graphene.ObjectType):
@@ -177,5 +218,6 @@ class Mutation(graphene.ObjectType):
     verify_token = graphql_jwt.Verify.Field()    
     create_author = CreateAuthor.Field()
     create_book = CreateBook.Field()
+    create_chapter = CreateChapter.Field()
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
