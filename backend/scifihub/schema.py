@@ -86,11 +86,11 @@ class Query(graphene.ObjectType):
 
     @login_required
     def resolve_authors(self, info):
-        print(info)
         return auth_models.User.objects.all()
 
     def resolve_books(self, info):
-        return book_models.Book.objects.all()
+        author_id = info.context.user.id
+        return book_models.Book.objects.filter(author_id=author_id)
 
     def resolve_books_from_author(self, info, author_name):
         return book_models.Book.objects.filter(
@@ -166,6 +166,7 @@ class CreateBook(graphene.Mutation):
 
     def mutate(self, info, name):
         author = info.context.user
+        print(author)
         book = book_models.Book.objects.create(name=name, author=author)
         return CreateBook(book=book)
 

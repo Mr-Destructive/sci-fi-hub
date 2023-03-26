@@ -1,53 +1,56 @@
+  <div>
+    <h1>Login</h1>
+    <form on:submit|preventDefault="{handleSubmit}">
+      <label>
+        Username:
+        <input type="text" bind:value="{username}">
+      </label>
+      <label>
+        Password:
+        <input type="password" bind:value="{password}">
+      </label>
+      <button type="submit">Submit</button>
+    </form>
+    Don't have a account <a href='/#/register'>Register</a>
+  </div>
+
 <script>
-  import jwt from 'jsonwebtoken';
-  import { useForm, validators, HintGroup, Hint,  required } from "svelte-use-form";
-
-  const form = useForm();
-
+  import jwt_decode from "jwt-decode";
+  import { apiUrl, setCookie } from "../utils.js"
+  let username = '';
+  let password = '';
+  
   async function handleSubmit() {
-    const apiUrl = 'http://localhost:8000/graphql/';
-    const variables = { username, password};
-    const query = `mutation TokenAuth($username: String!, $password: String!) {
-      tokenAuth(username: $username, password: $password) {
-        token
-        payload
-        refreshExpiresIn
+    let query = `
+      mutation TokenAuth($username: String!, $password: String!) {
+        tokenAuth(username: $username, password: $password) {
+          token
+          refreshToken
+        }
       }
-    }`;
+    `;
+    const variables = { username, password };
+    
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'HttpOnly': true,
+        },
+        body: JSON.stringify({ query, variables })
+      });
 
-    const response = await fetch(apiUrl, {
-      method: 'POST',
-      body: JSON.stringify({ query, variables }),
-      headers: { 'Content-Type': 'application/json' }
-    });
-
-    const data = await response.json();
-    localStorage.setItem('token', data.token);
-    //const decodedToken = jwt.decode(data.token);
-    //console.log(decodedToken);
+      const data = await response.json();
+      setCookie('token', data.data.tokenAuth.token, true, 'Lax');
+      setCookie('refreshtoken', data.data.tokenAuth.refreshToken, true, 'Lax');
+      let token = data.data.tokenAuth.token;
+      var decoded = jwt_decode(token);
+      if (token){
+          window.location.href = '/';
+      }
+    } catch (error) {
+      console.error(error);
+    }
   }
 </script>
-
-<form use:form on:submit|preventDefault={handleSubmit}>
-  <h1>Login</h1>
-
-  <input type="string" name="username" use:validators={[required ]} />
-  <HintGroup for="username">
-    <Hint on="required">This is a mandatory field</Hint>
-  </HintGroup>
-
-  <input type="password" name="password" use:validators={[required]} />
-  <Hint for="password" on="required">This is a mandatory field</Hint>
-
-  <button disabled={!$form.valid}>Login</button>
-</form>
-
-<pre>
-</pre>
-
-<style>
-	:global(.touched:invalid) {
-		border-color: red;
-		outline-color: red;
-	}
-</style>

@@ -12,15 +12,16 @@
 
       <button type="submit">Register</button>
     </form>
+    <p>Already have an account? <a href='/#/login'>Login</a></p>
 
   </div>
 
 <script>
   import { goto } from '@sapper/app';
+  import { apiUrl } from '../utils';
   let email = '';
   let username = '';
   let password = '';
-  export let apiUrl = 'http://localhost:8000/graphql/';
 
   async function handleRegister() {
     const query = `
@@ -58,44 +59,3 @@
   }
 </script>
 
-<style>
-  .register-form {
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 2rem;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
-  }
-
-  h2 {
-    text-align: center;
-  }
-
-  form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-top: 1rem;
-  }
-
-  label {
-    font-weight: bold;
-  }
-
-  input {
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-    font-size: 1rem;
-  }
-
-  button {
-    padding: 0.5rem 1rem;
-    background-color: #2b2d42;
-    color: #fff;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-  }
-</style>

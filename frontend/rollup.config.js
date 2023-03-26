@@ -28,7 +28,6 @@ function serve() {
 		}
 	};
 }
-import { Buffer } from 'buffer';
 
 export default {
 	input: 'src/main.js',
@@ -38,10 +37,7 @@ export default {
 		name: 'app',
 		file: 'public/build/bundle.js',
         globals: {
-          Buffer: 'Buffer',
-          stream: 'stream',
-          util: 'util',
-          crypto: 'crypto'
+          '@sapper/app': 'app'
         }
 	},
 	plugins: [
@@ -81,5 +77,8 @@ export default {
 	],
 	watch: {
 		clearScreen: false
-	}
+	},
+    external: [
+      '@sapper/app'
+    ],
 };

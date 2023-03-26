@@ -103,9 +103,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "author.User"
 
 CORS_ORIGIN_WHITELIST = [
-#    'http://127.0.0.1:8080',
-#    'http://localhost:8080',
-#    'chrome-extension://amknoiejhlmhancpahfcfcfhllgkpbld',
+    'http://127.0.0.1:8080',
+    'http://localhost:8080',
+    'chrome-extension://amknoiejhlmhancpahfcfcfhllgkpbld',
 ]
 CORS_ALLOW_METHODS = [
     'DELETE',
@@ -115,8 +115,14 @@ CORS_ALLOW_METHODS = [
     'POST',
     'PUT',
 ]
-CORS_ORIGIN_ALLOW_ALL = True
+#CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = [
+    'Access-Control-Allow-Origin', 
+    'Content-Type', 
+    'Authorization', 
+    'httponly'
+]
 
 GRAPHENE = {
     "SCHEMA": "scifihub.schema.schema",

@@ -1,27 +1,12 @@
 <script>
-    import AddBook from "./components/AddBook.svelte";
-    import Api from "./components/API.svelte";
-    import Login from "./components/Login.svelte";
-    import LoginPage from "./components/LoginPage.svelte";
+    import Navbar from "./components/Navbar.svelte";
 	export let name;
-	export let menu = 1;
 </script>
-
 <main>
-    <ul id="menu">
-        <li><a href="/" on:click|preventDefault={() => (menu = 1)}>Login</a></li>
-        <li><a href="/" on:click|preventDefault={() => (menu = 2)}>Books</a></li>
+	<h1>{name}</h1>
+    <ul>
+    <Navbar/>
     </ul>
-
-    {#if menu === 1}
-    <Login/>
-    {:else if menu === 2}
-    <AddBook/>
-    {:else}
-    <h1>
-        Page Not Found
-    </h1>
-    {/if}
 </main>
 
 <style>

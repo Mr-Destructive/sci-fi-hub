@@ -3,8 +3,8 @@ import App from './App.svelte';
 const app = new App({
 	target: document.body,
 	props: {
-		name: 'world'
+		name: 'SciFi Hub',
+        apiUrl: 'http://localhost:8000/graphql/'
 	}
 });
-
 export default app;

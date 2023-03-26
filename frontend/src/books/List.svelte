@@ -1,14 +1,13 @@
 <script>
   import { onMount } from 'svelte';
+    import { getCookie } from '../utils';
 
-  let user = null;
 
-  const tokenCookie = localStorage.getItem('token');
+  const token = getCookie('token');
 
   async function fetchUserData(apiUrl, token, query) {
     const resp = await fetch(apiUrl, {
       method: 'POST',
-      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
@@ -17,21 +16,29 @@
     });
 
     const { data } = await resp.json();
-    return data.whoami;
+    console.log(data)
+    return data.books;
   }
 
+let books = [];
   onMount(async () => {
-    if (tokenCookie) {
-      const token = tokenCookie;
+    if (token) {
       const apiUrl = 'http://localhost:8000/graphql/';
-      const query = '{whoami{id, username, email}}';
-      user = await fetchUserData(apiUrl, token, query);
+      const query = 'query{books{id, name}}';
+      books = await fetchUserData(apiUrl, token, query);
+      console.log(books)
     }
   });
 </script>
 
-{#if user}
-  <p>Hello, {user.username}</p>
+{#if books }
+    <ul>
+    {#each books as book}
+        <li>{book.name}</li>
+    {/each}
+    </ul>
+
 {:else}
   <p>Hello, Unauthenticated</p>
 {/if}
+   <button><a href='#/add/books/'>Add Book</a></button>
