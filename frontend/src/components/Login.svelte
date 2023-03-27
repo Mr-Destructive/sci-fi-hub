@@ -36,16 +36,14 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'HttpOnly': true,
         },
         body: JSON.stringify({ query, variables })
       });
 
       const data = await response.json();
-      setCookie('token', data.data.tokenAuth.token, true, 'Lax');
-      setCookie('refreshtoken', data.data.tokenAuth.refreshToken, true, 'Lax');
+      setCookie('token', data.data.tokenAuth.token);
+      setCookie('refreshtoken', data.data.tokenAuth.refreshToken);
       let token = data.data.tokenAuth.token;
-      var decoded = jwt_decode(token);
       if (token){
           window.location.href = '/';
       }

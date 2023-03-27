@@ -10,20 +10,21 @@
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
-        'HttpOnly': true
       },
       body: JSON.stringify({ query })
     });
 
     const { data } = await resp.json();
-    if (resp.status == 200){
-        setCookie('token', data.data.tokenAuth.token, true, 'Lax');
-        setCookie('refresh-token', data.data.tokenAuth.refreshToken, true, 'Lax');
+    console.log(token)
+    if (resp.status == 200 && data.data){
+        setCookie('token', data.data.tokenAuth.token);
+        setCookie('refresh-token', data.data.tokenAuth.refreshToken);
     }
     return data;
   }
 
   let token = getCookie('token');
+  token = getCookie('token')
   let refresh_token = getCookie('refreshtoken');
 
   onMount(async () => {
@@ -53,7 +54,7 @@
     return data.whoami;
   }
 
-  if (token) {
+  if (!false) {
       onMount(async () => {
           const query = '{whoami{id, username, email}}';
           user = await fetchUserData(apiUrl, token, query);

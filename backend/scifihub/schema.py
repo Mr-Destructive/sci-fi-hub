@@ -199,9 +199,46 @@ class CreateChapter(graphene.Mutation):
 
     def mutate(self, info, name, book_id, text_content, status, order):
         author = info.context.user
+        chapters = book_models.Chapter.objects.filter(book_id=book_id)
         book = book_models.Book.objects.filter(id=book_id).first()
         if book:
             if author.id == book.author.id:
+                chapter = chapters.filter(name=name)
+                if chapter:
+                    chapter = chapter.first()
+                    chapter.text_content = text_content
+                    chapter.status = status
+                    chapter.order = order
+                    chapter.save()
+                else:
+                    chapter = book_models.Chapter.objects.create(
+                        name=name,
+                        book_id=book_id,
+                        text_content=text_content,
+                        status=status,
+                        order=order,
+                    )
+                return CreateChapter(chapter=chapter)
+
+
+class CreateChapterMutation(graphene.Mutation):
+    class Arguments:
+        name = graphene.String(required=True)
+        book_id = graphene.ID(required=True)
+        text_content = graphene.String(required=True)
+        status = graphene.Boolean(required=False)
+        order = graphene.Int(required=True)
+
+    chapter = graphene.Field(ChapterType)
+    success = graphene.Boolean()
+
+    def mutate(self, info, name, book_id, text_content, status, order):
+        author = info.context.user
+        book = book_models.Book.objects.filter(id=book_id).first()
+
+        # Create
+        if chapter_id is None:
+            if book and author == book.author:
                 chapter = book_models.Chapter.objects.create(
                     name=name,
                     book_id=book_id,
@@ -209,7 +246,51 @@ class CreateChapter(graphene.Mutation):
                     status=status,
                     order=order,
                 )
-                return CreateChapter(chapter=chapter)
+                return CreateChapter(chapter=chapter, success=True)
+            else:
+                return CreateChapter(success=False)
+
+class UpdateChapter(graphene.Mutation):
+    class Arguments:
+        name = graphene.String(required=True)
+        book_id = graphene.ID(required=True)
+        text_content = graphene.String(required=True)
+        status = graphene.Boolean(required=False)
+        order = graphene.Int(required=True)
+        chapter_id = graphene.ID(required=False)
+
+    chapter = graphene.Field(ChapterType)
+    success = graphene.Boolean()
+
+    def mutate(self, info, name, book_id, text_content, status, order, chapter_id=None):
+        author = info.context.user
+        chapter = book_models.Chapter.objects.filter(id=chapter_id).first()
+        if chapter and author == chapter.book.author:
+            chapter.name = name
+            chapter.book_id = book_id
+            chapter.text_content = text_content
+            chapter.status = status
+            chapter.order = order
+            chapter.save()
+            return UpdateChapter(chapter=chapter, success=True)
+
+        return UpdateChapter(success=False)
+
+
+class DeleteChapter(graphene.Mutation):
+    class Arguments:
+        chapter_id = graphene.ID(required=True)
+
+    success = graphene.Boolean()
+
+    def mutate(self, info, chapter_id):
+        chapter = book_models.Chapter.objects.filter(id=chapter_id).first()
+        if chapter:
+            chapter.delete()
+            success = True
+        else:
+            success = False
+        return DeleteChapter(success=success)
 
 
 class Mutation(graphene.ObjectType):
@@ -219,5 +300,7 @@ class Mutation(graphene.ObjectType):
     create_author = CreateAuthor.Field()
     create_book = CreateBook.Field()
     create_chapter = CreateChapter.Field()
+    update_chapter = UpdateChapter.Field()
+    delete_chapter = DeleteChapter.Field()
 
 schema = graphene.Schema(query=Query, mutation=Mutation)

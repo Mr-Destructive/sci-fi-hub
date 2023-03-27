@@ -15,7 +15,8 @@
     import AddChapter from "../chapter/Add.svelte";
     let auth;
     let token = getCookie('token')
-    if (token){
+    if (token && token !== 'null') {
+    console.log(token)
         let user = jwtDecode(token)
         if (user.username){
             auth = true

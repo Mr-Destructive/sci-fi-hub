@@ -121,7 +121,8 @@ CORS_ALLOW_HEADERS = [
     'Access-Control-Allow-Origin', 
     'Content-Type', 
     'Authorization', 
-    'httponly'
+    'HttpOnly',
+    'Origin',
 ]
 
 GRAPHENE = {

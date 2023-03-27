@@ -10,21 +10,23 @@ export function getCookie(name) {
 
 export function setCookie(name, value, props) {
     props = props || {}
-    var exp = props.expires
-    if (typeof exp == "number" && exp) {
-        var d = new Date()
-        d.setTime(d.getTime() + exp*1000)
-        exp = props.expires = d
-    }
-    if(exp && exp.toUTCString) { props.expires = exp.toUTCString() }
+    var d = new Date();
+    d.setTime(d.getTime() + (7 * 24 * 60 * 60 * 1000));
+    var exp = d.toUTCString();
     value = encodeURIComponent(value)
-    var updatedCookie = name + "=" + value
-    for(var propName in props){
-        updatedCookie += "; " + propName
-        var propValue = props[propName]
-        if(propValue !== true){ updatedCookie += "=" + propValue }
-    }
-    document.cookie = updatedCookie
+    console.log(exp)
+    var updatedCookie = name + "=" + value + "; expires=" + exp + ";Secure;SameSite";
+    //for(var propName in props){
+    //    if(propName === "HttpOnly" || propName === "Secure" || propName === "SameSite") continue;
+    //    updatedCookie += "; " + propName
+    //    var propValue = props[propName]
+    //    if(propValue !== true){ updatedCookie += "=" + propValue }
+    //}
+    //if(props.Secure) { updatedCookie += "; Secure" }
+    //if(props.SameSite) { updatedCookie += "; SameSite=" + props.SameSite }
+    console.log(updatedCookie)
+    document.cookie = updatedCookie;
+    console.log(document.cookie)
 }
 
 export function deleteCookie(name) {

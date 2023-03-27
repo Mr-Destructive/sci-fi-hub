@@ -41,7 +41,6 @@ let bookId;
   {book.name} - By <i>"{book.author.username}"</i>
   {book.genre}
 </p>
-  {book.id}
   <a href="/#/chapter/?bookId={book.id}"><button>+ Chapter</button></a>
 {/if}
 

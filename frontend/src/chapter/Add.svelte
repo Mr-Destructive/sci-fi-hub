@@ -1,6 +1,6 @@
 <div>
    <a href='#/books/'><button>Books</button></a>
-    <h1>Add Book</h1>
+    <h1>Add Chapter</h1>
     <form on:submit|preventDefault="{handleSubmit}">
       <label>
         Name:
