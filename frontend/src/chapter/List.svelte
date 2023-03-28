@@ -24,8 +24,14 @@ let bookId;
   onMount(async () => {
     if (token) {
       const apiUrl = 'http://localhost:8000/graphql/';
-      const url = new URLSearchParams(window.location.hash.split('?')[1]);
-      bookId = url.get('bookId');
+      let url = window.location.hash.split('/');
+      bookId = url[url.length-1]
+      let id = bookId
+      if (parseInt(id) != id){
+        url = new URLSearchParams(window.location.hash.split('?')[1]);
+        bookId = url.get('bookId');
+      }
+      console.log(bookId)
       const query = `{bookChapters(bookId: ${bookId}){ id, name, order }}`;
       console.log(query)
       chapters = await fetchUserData(apiUrl, token, query);
@@ -36,10 +42,11 @@ let bookId;
 {#if chapters }
     <ul>
     {#each chapters as chapter}
-        <li>{chapter.order}<a href="/#/chapter/{chapter.id}">{chapter.name}</a></li>
+        <li>{chapter.order}<a href="/#/book/{bookId}/chapter/{chapter.order}">{chapter.name}</a></li>
     {/each}
     </ul>
-    <a href="/#/add/chapter/?bookId={bookId}">
+{:else}
+    <a href="/#/add/chapter/">
         <button>+ Chapter</button>
     </a>
 {/if}

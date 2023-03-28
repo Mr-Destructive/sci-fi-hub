@@ -13,6 +13,8 @@
     import Chapters from "../chapter/List.svelte";
     import Chapter from "../chapter/Chapter.svelte";
     import AddChapter from "../chapter/Add.svelte";
+    import EditChapter from "../chapter/Edit.svelte"
+    import DeleteChapter from "../chapter/Delete.svelte"
     let auth;
     let token = getCookie('token')
     if (token && token !== 'null') {
@@ -30,9 +32,11 @@
       "/books": Books,
       "/book/:id": Book,
       "/add/books": AddBook,
-      "/chapter/": Chapters, 
-      "/chapter/:id": Chapter, 
-      "/add/chapter/": AddChapter, 
+      "/chapter/": Chapters,
+      "/book/:id/chapter/:id": Chapter,
+      "/book/:id/chapter/edit/:id": EditChapter,
+      "/book/:id/chapter/delete/:id": DeleteChapter,
+      "/add/chapter/": AddChapter,
     };
 </script>
 <ul>

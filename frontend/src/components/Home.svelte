@@ -54,7 +54,7 @@
     return data.whoami;
   }
 
-  if (!false) {
+  if (token && token !== 'null') {
       onMount(async () => {
           const query = '{whoami{id, username, email}}';
           user = await fetchUserData(apiUrl, token, query);

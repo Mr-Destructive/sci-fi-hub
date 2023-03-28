@@ -64,6 +64,7 @@ class Query(graphene.ObjectType):
     )
     chapter = graphene.Field(
         ChapterType,
+        book_id=graphene.ID(),
         chapter_id=graphene.ID(),
     )
     book_sections = graphene.List(
@@ -110,10 +111,9 @@ class Query(graphene.ObjectType):
             id=book_id,
         ).first()
 
-    def resolve_chapter(self, info, chapter_id):
-        return book_models.Chapter.objects.filter(
-            id=chapter_id,
-        ).first()
+    def resolve_chapter(self, info, book_id, chapter_id):
+        book_chapters = book_models.Chapter.objects.filter(book_id=book_id)
+        return book_chapters.filter(order=chapter_id).first()
 
     def resolve_book_sections(self, info, book_id):
         return book_models.Section.objects.filter(
@@ -253,21 +253,22 @@ class CreateChapterMutation(graphene.Mutation):
 class UpdateChapter(graphene.Mutation):
     class Arguments:
         name = graphene.String(required=True)
-        book_id = graphene.ID(required=True)
         text_content = graphene.String(required=True)
         status = graphene.Boolean(required=False)
         order = graphene.Int(required=True)
-        chapter_id = graphene.ID(required=False)
+        chapter_id = graphene.ID(required=True)
+        book_id = graphene.ID(required=True)
 
     chapter = graphene.Field(ChapterType)
     success = graphene.Boolean()
 
-    def mutate(self, info, name, book_id, text_content, status, order, chapter_id=None):
+    def mutate(self, info, name, text_content, status, order, book_id, chapter_id):
         author = info.context.user
-        chapter = book_models.Chapter.objects.filter(id=chapter_id).first()
+        chapter = book_models.Chapter.objects.filter(
+            book_id=book_id, order=chapter_id
+        ).first()
         if chapter and author == chapter.book.author:
             chapter.name = name
-            chapter.book_id = book_id
             chapter.text_content = text_content
             chapter.status = status
             chapter.order = order
@@ -279,12 +280,13 @@ class UpdateChapter(graphene.Mutation):
 
 class DeleteChapter(graphene.Mutation):
     class Arguments:
+        book_id = graphene.ID(required=True)
         chapter_id = graphene.ID(required=True)
 
     success = graphene.Boolean()
 
-    def mutate(self, info, chapter_id):
-        chapter = book_models.Chapter.objects.filter(id=chapter_id).first()
+    def mutate(self, info, book_id, chapter_id):
+        chapter = book_models.Chapter.objects.filter(book_id=book_id, order=chapter_id).first()
         if chapter:
             chapter.delete()
             success = True
