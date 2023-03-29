@@ -3,6 +3,7 @@ let bookId;
   import { onMount } from 'svelte';
   import { getCookie } from '../utils';
   import Edit from './Edit.svelte';
+  import Delete from './Delete.svelte';
 
 
   const token = getCookie('token');
@@ -41,15 +42,17 @@ let chapterId;
       chapter = await fetchUserData(apiUrl, token, query);
     }
   });
-  let chp;
   let render = true
 </script>
 
 {#if chapter }
-<p>
-  {chapter.name} - By <i>"{chapter.book.author.username}"</i>
-  <Edit bind:render={render} bind:chapter bind:bookId/>
-  <a href="/#/book/{bookId}/chapter/delete/{chapter.order}">Delete</a>
-  {chapter.textContent}
-</p>
+  <h2>{chapter.name}</h2>
+  <h3>- By <i>"{chapter.book.author.username}"</i></h3>
+  <p>
+      <Edit bind:render={render} bind:chapter bind:bookId/>
+      <Delete bind:render={render} bind:chapter bind:bookId/>
+  </p>
+  <p>
+      {chapter.textContent}
+  </p>
 {/if}

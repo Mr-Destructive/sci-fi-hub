@@ -14,7 +14,7 @@
 <script>
 
   import jwt_decode from "jwt-decode";
-    import { getCookie } from "../utils";
+  import { getCookie } from "../utils";
   let name = '';
   export let apiUrl = 'http://localhost:8000/graphql/';
   

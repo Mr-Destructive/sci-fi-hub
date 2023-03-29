@@ -1,6 +1,6 @@
 <script>
   import { onMount } from 'svelte';
-    import { getCookie } from '../utils';
+  import { getCookie } from '../utils';
 
 
   const token = getCookie('token');
@@ -16,7 +16,6 @@
     });
 
     const { data } = await resp.json();
-    console.log(data)
     return data.books;
   }
 
@@ -26,7 +25,6 @@ let books = [];
       const apiUrl = 'http://localhost:8000/graphql/';
       const query = 'query{books{id, name}}';
       books = await fetchUserData(apiUrl, token, query);
-      console.log(books)
     }
   });
 </script>

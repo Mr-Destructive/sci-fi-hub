@@ -1,6 +1,5 @@
 <script>
   import { onMount } from 'svelte';
-    import Chapter from '../chapter/Chapter.svelte';
     import ListChapters from '../chapter/List.svelte';
     import { getCookie } from '../utils';
 
@@ -36,11 +35,15 @@ let bookId;
 </script>
 
 {#if book}
-<p>
-  {book.name} - By <i>"{book.author.username}"</i>
+
+  <h2>
+    {book.name}
+  </h2>
+  <h3>- By <i>"{book.author.username}"</i></h3>
   {book.genre}
-  <ListChapters bind:bookId={book.id}/>
-</p>
   <a href="/#/add/chapter/?bookId={bookId}"><button>+ Chapter</button></a>
+  <p>
+    <ListChapters bind:bookId={book.id}/>
+  </p>
 {/if}
 

@@ -1,16 +1,11 @@
 <script>
   let render = false;
   function render_form(){
-    console.log(render)
     render = true;
   }
   export let bookId
   import { apiUrl, getCookie } from "../utils.js"
   export let chapter;
-  let componentRef;
-  function bindComponent(ref) {
-    componentRef = ref;
-  }
   const url = window.location.href;
   let segment = url.split('/');
   let chapterId = parseInt(segment[segment.length - 1]);
@@ -20,10 +15,10 @@
   let textContent = '';
   let order = 0;
   let status = false;
-    name = chapter.name;
-    textContent = chapter.textContent;
-    order = chapter.order;
-    status = chapter.status;
+  name = chapter.name;
+  textContent = chapter.textContent;
+  order = chapter.order;
+  status = chapter.status;
 
   async function handleSubmit() {
     query = `
@@ -70,7 +65,6 @@
     <button on:click={render_form}>Edit</button>
 {:else }
 <div>
-{render}
   <a href='#/books/'><button>Books</button></a>
   <h1>Update Chapter</h1>
   <form on:submit|preventDefault="{handleSubmit}">

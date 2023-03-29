@@ -15,7 +15,6 @@
     });
 
     const { data } = await resp.json();
-    console.log(token)
     if (resp.status == 200 && data.data){
         setCookie('token', data.data.tokenAuth.token);
         setCookie('refresh-token', data.data.tokenAuth.refreshToken);
