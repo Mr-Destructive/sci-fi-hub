@@ -1,6 +1,7 @@
 <script>
   import { onMount } from 'svelte';
   import { getCookie } from '../utils';
+  export let bookId;
 
   const token = getCookie('token');
 
@@ -15,25 +16,14 @@
     });
 
     const { data } = await resp.json();
-    console.log(data)
     return data.bookChapters;
   }
 
 let chapters;
-let bookId;
   onMount(async () => {
     if (token) {
       const apiUrl = 'http://localhost:8000/graphql/';
-      let url = window.location.hash.split('/');
-      bookId = url[url.length-1]
-      let id = bookId
-      if (parseInt(id) != id){
-        url = new URLSearchParams(window.location.hash.split('?')[1]);
-        bookId = url.get('bookId');
-      }
-      console.log(bookId)
       const query = `{bookChapters(bookId: ${bookId}){ id, name, order }}`;
-      console.log(query)
       chapters = await fetchUserData(apiUrl, token, query);
     }
   });

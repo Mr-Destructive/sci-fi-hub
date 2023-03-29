@@ -1,6 +1,8 @@
 <script>
+let bookId;
   import { onMount } from 'svelte';
-    import { getCookie } from '../utils';
+  import { getCookie } from '../utils';
+  import Edit from './Edit.svelte';
 
 
   const token = getCookie('token');
@@ -21,7 +23,6 @@
 
 let chapter;
 let chapterId;
-let bookId;
   onMount(async () => {
     if (token) {
       const apiUrl = 'http://localhost:8000/graphql/';
@@ -29,16 +30,25 @@ let bookId;
       let segment = url.split('/');
       bookId = segment[segment.length-3]
       chapterId = segment[segment.length - 1];
-      const query = `query{chapter(bookId: ${bookId}, chapterId:${chapterId}){id, name, textContent, order, book{author{username}}}}`;
+      const query = `
+      query{
+        chapter(
+          bookId: ${bookId}, chapterId:${chapterId}
+        ){
+          id, name, textContent, order, book{author{username}}, status
+        }
+      }`;
       chapter = await fetchUserData(apiUrl, token, query);
     }
   });
+  let chp;
+  let render = true
 </script>
 
-{#if chapter}
+{#if chapter }
 <p>
   {chapter.name} - By <i>"{chapter.book.author.username}"</i>
-  <a href="/#/book/{bookId}/chapter/edit/{chapter.order}">Edit</a>
+  <Edit bind:render={render} bind:chapter bind:bookId/>
   <a href="/#/book/{bookId}/chapter/delete/{chapter.order}">Delete</a>
   {chapter.textContent}
 </p>

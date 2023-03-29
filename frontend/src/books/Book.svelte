@@ -18,7 +18,6 @@
     });
 
     const { data } = await resp.json();
-    console.log(data)
     return data.book;
   }
 
@@ -30,10 +29,8 @@ let bookId;
       const url = window.location.href;
       let segment = url.split('/');
       bookId = segment[segment.length - 1];
-      console.log(bookId)
       const query = `query{book(bookId:${bookId}){id, name, genre, author{username}}}`;
       book = await fetchUserData(apiUrl, token, query);
-      console.log(book);
     }
   });
 </script>
@@ -42,7 +39,7 @@ let bookId;
 <p>
   {book.name} - By <i>"{book.author.username}"</i>
   {book.genre}
-  <ListChapters/>
+  <ListChapters bind:bookId={book.id}/>
 </p>
   <a href="/#/add/chapter/?bookId={bookId}"><button>+ Chapter</button></a>
 {/if}
