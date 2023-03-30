@@ -8,6 +8,7 @@ from worlds import models as world_models
 from author import models as auth_models
 from book import models as book_models
 from projects import models as project_models
+from projects import schema as project_schema
 
 
 class WorldType(DjangoObjectType):
@@ -55,7 +56,7 @@ class DraftType(DjangoObjectType):
     class Meta:
         model = book_models.Draft
 
-class Query(graphene.ObjectType):
+class Query(project_schema.schema.Query, graphene.ObjectType):
     authors = graphene.List(AuthorType)
     books = graphene.List(BookType)
     book = graphene.Field(
@@ -86,10 +87,6 @@ class Query(graphene.ObjectType):
     drafts_for_book = graphene.List(
         DraftType,
         book_id=graphene.String(),
-    )
-    projects_of_author = graphene.List(
-        ProjectType,
-        author_name=graphene.String(),
     )
     whoami = graphene.Field(AuthorType)
 
@@ -132,11 +129,6 @@ class Query(graphene.ObjectType):
     def resolve_draft_for_book(self, info, book_id):
         return book_models.Draft.objects.filter(
             book_id=book_id,
-        )
-
-    def resolve_projects_of_author(self, info, author_name):
-        return project_models.Project.objects.filter(
-            author__name=author_name,
         )
 
     def resolve_whoami(self, info):
@@ -221,35 +213,6 @@ class CreateChapter(graphene.Mutation):
                 return CreateChapter(chapter=chapter)
 
 
-class CreateChapterMutation(graphene.Mutation):
-    class Arguments:
-        name = graphene.String(required=True)
-        book_id = graphene.ID(required=True)
-        text_content = graphene.String(required=True)
-        status = graphene.Boolean(required=False)
-        order = graphene.Int(required=True)
-
-    chapter = graphene.Field(ChapterType)
-    success = graphene.Boolean()
-
-    def mutate(self, info, name, book_id, text_content, status, order):
-        author = info.context.user
-        book = book_models.Book.objects.filter(id=book_id).first()
-
-        # Create
-        if chapter_id is None:
-            if book and author == book.author:
-                chapter = book_models.Chapter.objects.create(
-                    name=name,
-                    book_id=book_id,
-                    text_content=text_content,
-                    status=status,
-                    order=order,
-                )
-                return CreateChapter(chapter=chapter, success=True)
-            else:
-                return CreateChapter(success=False)
-
 class UpdateChapter(graphene.Mutation):
     class Arguments:
         name = graphene.String(required=True)
@@ -295,7 +258,7 @@ class DeleteChapter(graphene.Mutation):
         return DeleteChapter(success=success)
 
 
-class Mutation(graphene.ObjectType):
+class Mutation(project_schema.schema.Mutation, graphene.ObjectType):
     token_auth = graphql_jwt.ObtainJSONWebToken.Field()
     refresh_token = graphql_jwt.Refresh.Field()
     verify_token = graphql_jwt.Verify.Field()    

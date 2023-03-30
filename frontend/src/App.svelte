@@ -1,12 +1,14 @@
 <script>
     import Navbar from "./components/Navbar.svelte";
+    import ListProjects from "./project/List.svelte";
 	export let name;
 </script>
 <main>
 	<h1>{name}</h1>
     <ul>
-    <Navbar/>
+        <Navbar/>
     </ul>
+    <ListProjects/>
 </main>
 
 <style>

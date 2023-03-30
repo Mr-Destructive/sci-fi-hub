@@ -5,7 +5,7 @@ from author.models import User
 
 class Project(models.Model):
     name = models.CharField(max_length=128)
-    desctription = models.TextField()
+    description = models.TextField()
     author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     project_type = models.CharField(max_length=64, null=True)
     status = models.CharField(max_length=128, null=True)

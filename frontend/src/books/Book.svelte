@@ -35,7 +35,6 @@ let bookId;
 </script>
 
 {#if book}
-
   <h2>
     {book.name}
   </h2>
@@ -46,4 +45,3 @@ let bookId;
     <ListChapters bind:bookId={book.id}/>
   </p>
 {/if}
-
