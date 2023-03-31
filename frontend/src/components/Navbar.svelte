@@ -15,6 +15,7 @@
     import AddChapter from "../chapter/Add.svelte";
     import EditChapter from "../chapter/Edit.svelte"
     import DeleteChapter from "../chapter/Delete.svelte"
+    import Project from "../project/Project.svelte"
     let auth;
     let token = getCookie('token')
     if (token && token !== 'null') {
@@ -36,6 +37,7 @@
       "/book/:id/chapter/edit/:id": EditChapter,
       "/book/:id/chapter/delete/:id": DeleteChapter,
       "/add/chapter/": AddChapter,
+      "/project/:id": Project,
     };
 </script>
 <ul>

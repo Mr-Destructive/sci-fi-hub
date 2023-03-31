@@ -32,7 +32,7 @@
 {#if projects }
     <ul>
     {#each projects as project}
-        <li><a href="/#/projects/">{project.name}</a></li>
+        <li><a href="/#/project/{project.id}">{project.name}</a></li>
     {/each}
     </ul>
 {:else}

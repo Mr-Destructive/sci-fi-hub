@@ -104,7 +104,9 @@ class Query(project_schema.schema.Query, graphene.ObjectType):
         )
 
     def resolve_book(self, info, book_id):
+        author_id = info.context.user.id
         return book_models.Book.objects.filter(
+            author_id=author_id,
             id=book_id,
         ).first()
 

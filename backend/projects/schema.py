@@ -13,11 +13,22 @@ class Query(graphene.ObjectType):
         ProjectType,
         author_id=graphene.ID(),
     )
+    project = graphene.Field(
+        ProjectType,
+        project_id=graphene.ID(),
+    )
 
     def resolve_projects(self, info):
         author_id = info.context.user.id
         return project_models.Project.objects.filter(
             author_id=author_id,
+        )
+
+    def resolve_project(self, info, project_id):
+        author_id = info.context.user.id
+        return project_models.Project.objects.get(
+            author_id=author_id,
+            id=project_id,
         )
 
 class CreateProject(graphene.Mutation):
