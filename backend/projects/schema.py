@@ -78,6 +78,7 @@ class DeleteProject(graphene.Mutation):
         status = graphene.Boolean(required=False)
 
     project = graphene.Field(ProjectType)
+
     def mutate(self):
         pass
 
