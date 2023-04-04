@@ -9,6 +9,7 @@ from author import models as auth_models
 from book import models as book_models
 from projects import models as project_models
 from projects import schema as project_schema
+from worlds import schema as world_schema 
 
 
 class WorldType(DjangoObjectType):
@@ -56,7 +57,11 @@ class DraftType(DjangoObjectType):
     class Meta:
         model = book_models.Draft
 
-class Query(project_schema.schema.Query, graphene.ObjectType):
+class Query(
+    project_schema.schema.Query, 
+    world_schema.schema.Query,
+    graphene.ObjectType,
+):
     authors = graphene.List(AuthorType)
     books = graphene.List(BookType)
     book = graphene.Field(
@@ -260,7 +265,11 @@ class DeleteChapter(graphene.Mutation):
         return DeleteChapter(success=success)
 
 
-class Mutation(project_schema.schema.Mutation, graphene.ObjectType):
+class Mutation(
+    project_schema.schema.Mutation, 
+    world_schema.schema.Mutation, 
+    graphene.ObjectType
+):
     token_auth = graphql_jwt.ObtainJSONWebToken.Field()
     refresh_token = graphql_jwt.Refresh.Field()
     verify_token = graphql_jwt.Verify.Field()    

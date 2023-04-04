@@ -1,8 +1,6 @@
 <script>
   import { onMount } from 'svelte';
-    import { each } from 'svelte/internal';
   import { getCookie } from '../utils';
-
 
   const token = getCookie('token');
 
@@ -28,7 +26,7 @@ let projectId;
       const url = window.location.href;
       let segment = url.split('/');
       projectId = segment[segment.length - 1];
-      const query = `query{project(projectId:${projectId}){id, name, bookSet{name}}}`;
+      const query = `query{project(projectId:${projectId}){id, name, bookSet{name, id}}}`;
       project = await fetchUserData(apiUrl, token, query);
     }
   });
@@ -39,6 +37,6 @@ let projectId;
     {project.name}
   </h2>
   {#each project.bookSet as book}
-      <h3><i>"{book.name}"</i></h3>
+      <li><a href="#/book/{book.id}">{book.name}</a></li>
   {/each}
 {/if}

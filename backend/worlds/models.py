@@ -1,5 +1,6 @@
 from django.db import models
 from django.template.defaultfilters import default
+from author.models import User
 
 from book.models import Book
 from projects.models import Project
@@ -23,6 +24,12 @@ class World(models.Model):
         max_length=32, choices=world_types.choices, default=world_types.kingdom
     )
     description = models.TextField()
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+        default=None,
+    )
     project = models.ForeignKey(
         Project,
         on_delete=models.CASCADE,

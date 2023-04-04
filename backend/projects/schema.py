@@ -1,12 +1,17 @@
-from author.models import User
+from django.contrib.auth.models import auth
+from django.core.exceptions import PermissionDenied
+
 import graphene
 from graphene_django import DjangoObjectType
+
 import projects.models as project_models
+from author.models import User
 
 
 class ProjectType(DjangoObjectType):
     class Meta:
         model = project_models.Project
+
 
 class Query(graphene.ObjectType):
     projects = graphene.List(
@@ -18,18 +23,30 @@ class Query(graphene.ObjectType):
         project_id=graphene.ID(),
     )
 
-    def resolve_projects(self, info):
-        author_id = info.context.user.id
-        return project_models.Project.objects.filter(
-            author_id=author_id,
-        )
+    def resolve_projects(self, info, author_id):
+        user_id = info.context.user.id
+        if author_id is not user_id:
+            projects = project_models.Project.objects.filter(
+                visibility=project_models.Project.visiblity_types.public,
+                author_id=author_id,
+            )
+        else:
+            projects = project_models.Project.objects.filter(
+                author_id=author_id,
+            )
+        return projects
 
     def resolve_project(self, info, project_id):
-        author_id = info.context.user.id
-        return project_models.Project.objects.get(
-            author_id=author_id,
-            id=project_id,
-        )
+        user_id = info.context.user.id
+        project = project_models.Project.objects.get(id=project_id)
+        if project.author.id is not user_id:
+            if project.visibility == project_models.Project.visiblity_types.public:
+                return project
+            else:
+                return PermissionDenied
+        else:
+            return project
+
 
 class CreateProject(graphene.Mutation):
     class Arguments:
@@ -67,6 +84,7 @@ class UpdateProject(graphene.Mutation):
         status = graphene.Boolean(required=False)
 
     project = graphene.Field(ProjectType)
+
     def mutate(self):
         pass
 
@@ -87,5 +105,6 @@ class Mutation(graphene.ObjectType):
     create_project = CreateProject.Field()
     update_project = UpdateProject.Field()
     delete_project = DeleteProject.Field()
+
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
