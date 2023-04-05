@@ -14,6 +14,16 @@ class CharacterType(DjangoObjectType):
         model = world_models.Character
 
 
+class LocationType(DjangoObjectType):
+    class Meta:
+        model = world_models.Location
+
+
+class ReligionType(DjangoObjectType):
+    class Meta:
+        model = world_models.Religions
+
+
 class Query(graphene.ObjectType):
     worlds = graphene.List(
         WorldType,
@@ -38,6 +48,12 @@ class Query(graphene.ObjectType):
     character = graphene.Field(
         CharacterType,
         character_id=graphene.ID(),
+    )
+    locations = graphene.List(
+        LocationType,
+    )
+    religions = graphene.List(
+        ReligionType,
     )
 
     def resolve_worlds(self, info):
@@ -73,6 +89,30 @@ class Query(graphene.ObjectType):
             book_id=book_id,
             book__author_id=author_id,
         )
+
+    def resolve_locations(self, info):
+        author_id = info.context.user.id
+        worlds = world_models.World.objects.filter(
+            author_id=author_id
+        ).values_list('id', flat=True)
+        locations = []
+        for world in worlds:
+            locations.append(
+                world_models.Location.objects.filter(world_id = world)
+            )
+        return locations
+
+    def resolve_religions(self, info):
+        author_id = info.context.user.id
+        worlds = world_models.World.objects.filter(
+            author_id=author_id
+        ).values_list('id', flat=True)
+        religions = []
+        for world in worlds:
+            religions.append(
+                world_models.Religions.objects.filter(world_id = world)
+            )
+        return religions
 
 
 class CreateWorld(graphene.Mutation):

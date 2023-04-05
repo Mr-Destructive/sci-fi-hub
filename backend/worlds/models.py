@@ -79,6 +79,7 @@ class Religions(models.Model):
     name = models.CharField(max_length=128)
     desription = models.TextField()
     attributes = models.TextField()
+    world = models.ForeignKey(World, on_delete=models.SET_NULL, null=True, blank=True)
 
 
 class Location(models.Model):
@@ -95,6 +96,8 @@ class Location(models.Model):
     name = models.CharField(max_length=128)
     desription = models.TextField()
     attributes = models.TextField()
+
+    world = models.ForeignKey(World, on_delete=models.SET_NULL, null=True, blank=True)
 
     landscape_type = models.CharField(
         max_length=32, choices=landscape_types.choices, default=landscape_types.plains
