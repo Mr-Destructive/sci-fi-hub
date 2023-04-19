@@ -75,7 +75,7 @@ class Character(models.Model):
         return self.name
 
 
-class Religions(models.Model):
+class Religion(models.Model):
     name = models.CharField(max_length=128)
     desription = models.TextField()
     attributes = models.TextField()
@@ -102,3 +102,12 @@ class Location(models.Model):
     landscape_type = models.CharField(
         max_length=32, choices=landscape_types.choices, default=landscape_types.plains
     )
+
+
+class MagicSystem(models.Model):
+    name = models.CharField(max_length=64)
+    description = models.TextField()
+    world = models.ForeignKey(World, on_delete=models.SET_NULL, null=True, blank=True)
+
+    def __str__(self):
+        return self.name + "in" + self.world.name

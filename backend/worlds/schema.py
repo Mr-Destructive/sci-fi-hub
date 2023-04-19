@@ -21,7 +21,12 @@ class LocationType(DjangoObjectType):
 
 class ReligionType(DjangoObjectType):
     class Meta:
-        model = world_models.Religions
+        model = world_models.Religion
+
+
+class MagicSystemType(DjangoObjectType):
+    class Meta:
+        model = world_models.MagicSystem
 
 
 class Query(graphene.ObjectType):
@@ -54,6 +59,9 @@ class Query(graphene.ObjectType):
     )
     religions = graphene.List(
         ReligionType,
+    )
+    magic_systems = graphene.List(
+        MagicSystemType,
     )
 
     def resolve_worlds(self, info):
@@ -110,9 +118,21 @@ class Query(graphene.ObjectType):
         religions = []
         for world in worlds:
             religions.append(
-                world_models.Religions.objects.filter(world_id = world)
+                world_models.Religion.objects.filter(world_id = world)
             )
         return religions
+
+    def resolve_magic_systems(self, info):
+        author_id = info.context.user.id
+        worlds = world_models.World.objects.filter(
+            author_id=author_id
+        ).values_list('id', flat=True)
+        magic_systems = []
+        for world in worlds:
+            magic_systems.append(
+                world_models.MagicSystem.objects.filter(world_id = world)
+            )
+        return magic_systems 
 
 
 class CreateWorld(graphene.Mutation):
