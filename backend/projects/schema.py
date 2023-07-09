@@ -16,23 +16,28 @@ class ProjectType(DjangoObjectType):
 class Query(graphene.ObjectType):
     projects = graphene.List(
         ProjectType,
-        author_id=graphene.ID(),
+        author_id=graphene.ID(default_value=None),
     )
     project = graphene.Field(
         ProjectType,
         project_id=graphene.ID(),
     )
+    project_by_slug = graphene.Field(
+        ProjectType,
+        slug=graphene.String(),
+    )
 
     def resolve_projects(self, info, author_id):
         user_id = info.context.user.id
-        if author_id is not user_id:
+        print(user_id, author_id)
+        if author_id and author_id is not user_id:
             projects = project_models.Project.objects.filter(
-                visibility=project_models.Project.visiblity_types.public,
+                #visibility=project_models.Project.visiblity_types.public,
                 author_id=author_id,
             )
         else:
             projects = project_models.Project.objects.filter(
-                author_id=author_id,
+                author_id=user_id,
             )
         return projects
 
@@ -47,20 +52,36 @@ class Query(graphene.ObjectType):
         else:
             return project
 
+    def resolve_project_by_slug(self, info, slug):
+        user_id = info.context.user.id
+        project = project_models.Project.objects.get(slug=slug, author_id=user_id)
+        if project.author.id is not user_id:
+            if project.visibility == project_models.Project.visiblity_types.public:
+                return project
+            else:
+                return PermissionDenied
+        else:
+            return project
 
 class CreateProject(graphene.Mutation):
     class Arguments:
         name = graphene.String(required=True)
         description = graphene.String(required=False, default_value="")
-        status = graphene.Boolean(required=False, default_value=True)
+        visibility = graphene.String(
+            required=False, 
+            default_value=project_models.Project.visiblity_types.private
+        )
+        status = graphene.String(required=False, default_value=project_models.Project.status_types.draft)
+        project_type = graphene.String(required=False)
 
     project = graphene.Field(ProjectType)
 
-    def mutate(self, info, name, description="", status=True):
+    def mutate(self, info, name, description="", visibility=project_models.Project.visiblity_types.private, status=project_models.Project.status_types.draft, project_type=""):
         author = info.context.user
         if author:
             projects = project_models.Project.objects.filter(
-                author_id=author.id, name=name
+                author_id=author.id, name=name, description=description,
+                visibility=visibility, status=status, project_type=project_type
             )
             if projects:
                 project = projects.first()
@@ -72,7 +93,9 @@ class CreateProject(graphene.Mutation):
                     name=name,
                     description=description,
                     author_id=author.id,
+                    visibility=visibility,
                     status=status,
+                    project_type=project_type,
                 )
             return CreateProject(project=project)
 
